@@ -201,25 +201,25 @@ def main():
             shuffle(idx_train)
             shuffle(idx_valid)
             E_t = open('./weights/error/E_t' + str(epoch) + '.txt','w')
-            for iter in range(NumTrain//batch):
-                Input = tot[idx_train[iter]*batch:idx_train[iter]*batch+batch][:][:]
-                Label = scat[idx_train[iter]*batch:idx_train[iter]*batch+batch][:][:]
+            for idx in range(NumTrain//batch):
+                Input = tot[idx_train[idx]*batch:idx_train[idx]*batch+batch][:][:]
+                Label = scat[idx_train[idx]*batch:idx_train[idx]*batch+batch][:][:]
                 _,l = sess.run([opt,tot_loss],feed_dict={x:Input,y:Label},options=config_pb2.RunOptions(report_tensor_allocations_upon_oom=True))
                 e = "%0.8f\n" % l
                 E_t.write(e)
                 end = time.time()
-                print("[Epoch %2d (%6d/%d)] loss %.7f\t %.2f sec" % (epoch,iter,NumTrain//batch,l,end-start))
+                print("[Epoch %2d (%6d/%d)] loss %.7f\t %.2f sec" % (epoch,idx,NumTrain//batch,l,end-start))
             E_t.close()
             
             E_v = open('./weights/error/E_v' + str(epoch) + '.txt','w')
-            for iter in range(NumValid//batch):
-                Input = tot[idx_valid[iter]*batch:idx_valid[iter]*batch+batch][:][:]
-                Label = scat[idx_valid[iter]*batch:idx_valid[iter]*batch+batch][:][:]
+            for idx in range(NumValid//batch):
+                Input = tot[idx_valid[idx]*batch:idx_valid[idx]*batch+batch][:][:]
+                Label = scat[idx_valid[idx]*batch:idx_valid[idx]*batch+batch][:][:]
                 l = sess.run(tot_loss,feed_dict={x:Input,y:Label})
                 e = "%0.8f\n" % l
                 E_v.write(e)
                 end = time.time()
-                print("[Epoch %2d (%6d/%d)] loss %.7f\t %.2f sec" % (epoch,iter,NumValid//batch,l,end-start))
+                print("[Epoch %2d (%6d/%d)] loss %.7f\t %.2f sec" % (epoch,idx,NumValid//batch,l,end-start))
             E_v.close()
             saver.save(sess,'./tmp/weights.ckpt')
             if os.path.isdir('./weights/' + str(epoch+1)):
